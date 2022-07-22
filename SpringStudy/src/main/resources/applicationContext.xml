@@ -1,7 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+	
+	<!-- bean등록하지 않고 자동으로 객체들을 생성하기 위함 -->
+	<!-- 이 설정을 추가하면 @component가 설정된 클래스들을 자동으로 객체 생성 -->
+	<!-- base-package로 시작되는 모든 패키지를 스캔대상에 포함 -->
+	<context:component-scan base-package="com.springbook.biz"/>
+	
+	<!-- AOP를 활용해 비즈니스 로직 수행전 로깅을 위함 -->
+	<bean id="log" class="com.springbook.biz.common.LogAdvice"></bean>
+	<aop:config>
+		<aop:pointcut expression="execution(* com.springbook.biz..*Impl.*(..))" id="allPointcut"/>
+		<aop:aspect ref="log">
+			<aop:before pointcut-ref="allPointcut" method="printLog"/>
+		</aop:aspect>
+	</aop:config>
+	
+	<!-- 어노테이션 기반 AOP를 위함 -->
+	<!-- 엘리먼트만 선언해주면 스프링 컨테이너는 AOP관련 어노테이션들을 인식하고 처리 -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	
+	<!-- DataSource설정 -->
+	<!-- JdbcTemplate 객체가 사용할 DataSource를 bean등록하여 스프링컨테이너가 생성하도록 해야함 -->
+	
+	<!-- 외부의 프로퍼티 파일을 참조하기 위해 설정 -->
+	<context:property-placeholder location="classpath:config/database.properties" />
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	<!-- Spring JDBC 설정 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 트랜잭션(Transaction) 설정 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 트랜잭션 어드바이스 설정 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true"/>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- AOP설정을 통한 트랜잭션 적용 -->
+	<!-- 트랜잭션 관리 어드바이스는 우리가 직접 클래스를 구현하지 않기때문에 메소드이름을 알 수 없다. 그래서 advisor엘리먼트 사용! -->
+	<!-- advisor와 aspect는 같은 기능 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.springbook.biz..*(..))" id="txPointcut"/>
+		<aop:advisor pointcut-ref="txPointcut" advice-ref="txAdvice"/>
+	</aop:config>
 
 </beans>
