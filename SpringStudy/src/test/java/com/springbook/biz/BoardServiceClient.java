@@ -15,18 +15,34 @@ public class BoardServiceClient {
 		
 		//2. Spring 컨테이너로부터 BoardServiceImpl 객체를 Lookup한다.
 		BoardService boardService = (BoardService) container.getBean("boardService");
+		UsersService usersService = (UsersService) container.getBean("usersService");
 		
-		//3. 글 등록 기능 테스트!
+		/*//3. 글 등록 기능 테스트!
 		BoardVO vo = new BoardVO();
-		vo.setTitle("임시제목5");
-		vo.setWriter("홍길동5");
-		vo.setContent("임시내용입니다55!");
+		vo.setTitle("임시제목7");
+		vo.setWriter("홍길동7");
+		vo.setContent("임시내용입니다77!");
 		boardService.insertBoard(vo);
 		
 		//4. 글 목록 검색 기능 테스트!
 		List<BoardVO> boardList = boardService.getBoardList(vo);
 		for(BoardVO board : boardList) {
 			System.out.println(board.toString());
+		}*/
+		
+		//3. 회원 등록 기능 테스트!
+		UsersVO vo = new UsersVO();
+		vo.setUsersId("111");
+		vo.setUsersPw("111");
+		vo.setUsersName("111");
+		vo.setUsersEmail("111");
+		vo.setUsersPhone("111");
+		vo.setUsersAddress("111");
+		
+		//4. 회원 목록 검색 기능 테스트!
+		List<UsersVO> usersList = usersService.getUsersList(vo);
+		for(UsersVO users : usersList) {
+			System.out.println(users.toString());
 		}
 		
 		//5. Spring 컨테이너 종료
