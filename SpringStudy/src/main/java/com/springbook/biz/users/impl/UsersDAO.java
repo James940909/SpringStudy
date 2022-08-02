@@ -38,6 +38,8 @@ public class UsersDAO {
 	private final String Users_Get = "SELECT * FROM USERS WHERE usersId=? and usersPw=?";
 	private final String Users_List = "SELECT * FROM USERS ORDER BY usersNum DESC";
 	
+	
+	
 	public void insertUsers(UsersVO vo) {
 		Object[] args = { vo.getUsersId(), vo.getUsersPw(), vo.getUsersName(), vo.getUsersEmail(), vo.getUsersPhone(), vo.getUsersAddress() };
 		jdbcTemplate.update(Users_Insert, args);
