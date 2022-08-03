@@ -32,12 +32,13 @@ public class BoardServiceClient {
 		
 		//3. 회원 등록 기능 테스트!
 		UsersVO vo = new UsersVO();
-		vo.setUsersId("111");
+		vo.setUsersId("aaa");
 		vo.setUsersPw("111");
-		vo.setUsersName("111");
-		vo.setUsersEmail("111");
-		vo.setUsersPhone("111");
-		vo.setUsersAddress("111");
+		vo.setUsersName("테스트");
+		vo.setUsersEmail("테스트");
+		vo.setUsersPhone("테스트");
+		vo.setUsersAddress("테스트");
+		usersService.insertUsers(vo);
 		
 		//4. 회원 목록 검색 기능 테스트!
 		List<UsersVO> usersList = usersService.getUsersList(vo);

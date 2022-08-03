@@ -26,6 +26,7 @@ class BoardRowMapper implements RowMapper<BoardVO>{
 
 @Repository("boardDAO")
 public class BoardDAO {
+	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	

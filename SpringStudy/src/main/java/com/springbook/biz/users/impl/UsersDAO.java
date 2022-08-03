@@ -25,7 +25,7 @@ class UsersRowMapper implements RowMapper<UsersVO>{
 	}
 }
 
-@Repository("usersDAO")
+@Repository
 public class UsersDAO {
 	
 	@Autowired
@@ -54,6 +54,7 @@ public class UsersDAO {
 	}
 	public UsersVO getUsers(UsersVO vo) {
 		Object[] args = { vo.getUsersId(), vo.getUsersPw() };
+		System.out.println("jdbcTemplate1: "+jdbcTemplate);
 		return jdbcTemplate.queryForObject(Users_Get, args, new UsersRowMapper());
 	}
 	public List<UsersVO> getUsersList(UsersVO vo) {
